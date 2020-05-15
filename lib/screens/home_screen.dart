@@ -1,14 +1,18 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youtubeblocapp/blocs/favorite_bloc.dart';
 import 'package:youtubeblocapp/blocs/videos_bloc.dart';
 import 'package:youtubeblocapp/delegates/data_search.dart';
+import 'package:youtubeblocapp/models/video.dart';
+import 'package:youtubeblocapp/screens/favorites_screen.dart';
 import 'package:youtubeblocapp/widgets/video_tile.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<VideosBloc>(context);
+    final blocFav = BlocProvider.of<FavoriteBloc>(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -22,14 +26,28 @@ class HomeScreen extends StatelessWidget {
         actions: <Widget>[
           Align(
             alignment: Alignment.center,
-            child: Text('0'),
+            child: StreamBuilder<Map<String, Video>>(
+              stream: blocFav.outFav,
+              builder: (context, snapshot){
+                if(snapshot.hasData){
+                  return Text(snapshot.data.length.toString());
+                }
+                else{
+                  return Container();
+                }
+              },
+            ),
           ),
           IconButton(
             icon: Icon(
               Icons.star,
               color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => FavoritesScreen()
+              ));
+            },
           ),
           IconButton(
             icon: Icon(
@@ -53,19 +71,19 @@ class HomeScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index < snapshot.data.length) {
                   return VideoTile(snapshot.data[index]);
-                } else if(index > 1) {
+                } else if (index > 1) {
                   bloc.inSearch.add(null);
                   return Container(
                     height: 40,
                     width: 40,
                     alignment: Alignment.center,
                     child: Center(
-                    child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-                  ),
-                  ),
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                      ),
+                    ),
                   );
-                }else{
+                } else {
                   return Container();
                 }
               },

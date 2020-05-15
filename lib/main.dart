@@ -1,22 +1,23 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
-import 'package:youtubeblocapp/api.dart';
+import 'package:youtubeblocapp/blocs/videos_bloc.dart';
 import 'package:youtubeblocapp/screens/home_screen.dart';
 
 void main() {
   runApp(MyApp());
-
-  Api api = Api();
-  api.search('novinha');
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Tube',
-      home: HomeScreen(),
+    return BlocProvider(
+     bloc: VideosBloc(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Tube',
+        home: HomeScreen(),
+      ),
     );
   }
 }
